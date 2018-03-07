@@ -104,7 +104,7 @@ func (p *Plugin) getLastPercentile(stat map[string]float64, prefix string, dimen
 	}
 
 	for _, percentile := range [...]string{"p99", "p95", "p90", "p50", "p10"} {
-		latest := now
+		latest := *datapoints[0].Timestamp
 		var latestVal float64
 		for _, dp := range datapoints {
 			if dp.Timestamp.Before(latest) {
