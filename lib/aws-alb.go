@@ -61,7 +61,7 @@ func (p Plugin) getLastPercentile(stat map[string]float64, dimensions []*cloudwa
 
 	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
 		Dimensions: dimensions,
-		StartTime:  aws.Time(now.Add(time.Duration(120) * time.Second * -1)), // 2 min (to fetch at least 1 data-point)
+		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)), // 3 min (to fetch at least 1 data-point)
 		EndTime:    aws.Time(now),
 		MetricName: aws.String(metricName),
 		Period:     aws.Int64(60),
