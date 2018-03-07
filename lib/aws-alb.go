@@ -85,7 +85,7 @@ func (p *Plugin) getLastPercentile(stat map[string]float64, prefix string, dimen
 
 	response, err := p.CloudWatch.GetMetricStatistics(&cloudwatch.GetMetricStatisticsInput{
 		Dimensions: dimensions,
-		StartTime:  aws.Time(now.Add(time.Duration(180) * time.Second * -1)), // 3 min (to fetch at least 1 data-point)
+		StartTime:  aws.Time(now.Add(-3 * time.Minute)), // 3 min (to fetch at least 1 data-point)
 		EndTime:    aws.Time(now),
 		MetricName: aws.String(metricName),
 		Period:     aws.Int64(60),
@@ -104,14 +104,14 @@ func (p *Plugin) getLastPercentile(stat map[string]float64, prefix string, dimen
 	}
 
 	for _, percentile := range [...]string{"p99", "p95", "p90", "p50", "p10"} {
-		latest := new(time.Time)
+		latest := now
 		var latestVal float64
 		for _, dp := range datapoints {
-			if dp.Timestamp.Before(*latest) {
+			if dp.Timestamp.Before(latest) {
 				continue
 			}
 
-			latest = dp.Timestamp
+			latest = *dp.Timestamp
 			latestVal = *dp.ExtendedStatistics[percentile]
 		}
 		stat[prefix+percentile] = latestVal
