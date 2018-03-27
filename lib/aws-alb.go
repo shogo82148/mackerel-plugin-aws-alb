@@ -146,7 +146,7 @@ func (p *Plugin) FetchMetrics() (map[string]float64, error) {
 		name := strings.Split(tg, "/")
 
 		if err := p.getLastPercentile(stat, "response_ext_per_group."+name[1]+".", glb, "TargetResponseTime"); err != nil {
-			return nil, err
+			log.Println(name[1], err)
 		}
 	}
 
@@ -160,7 +160,7 @@ func (p *Plugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	if err := p.getLastPercentile(stat, "", glb, "TargetResponseTime"); err != nil {
-		return nil, err
+		log.Println(err)
 	}
 
 	return stat, nil
@@ -168,17 +168,6 @@ func (p *Plugin) FetchMetrics() (map[string]float64, error) {
 
 // GraphDefinition for Mackerel
 func (p *Plugin) GraphDefinition() map[string]mp.Graphs {
-	/*met := make([]mp.Metrics, 0, 5*len(p.TargetGroups))
-	for _, tg := range p.TargetGroups {
-		name := strings.Split(tg, "/")
-		for _, percentile := range [...]string{"p99", "p95", "p90", "p50", "p10"} {
-			met = append(met, mp.Metrics{
-				Name:  name[1] + "_" + percentile,
-				Label: percentile,
-			})
-		}
-	}*/
-
 	graphdef := map[string]mp.Graphs{
 		"response_ext": {
 			Label: "Response Time Percentile",
